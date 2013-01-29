@@ -15,12 +15,12 @@ public class RestResponseHandler implements ContainerResponseWriter {
     /**
      * The request that will be responded.
      */
-    HttpServerRequest req;
+    private HttpServerRequest req;
 
     /**
      * The body of the response.
      */
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     RestResponseHandler(HttpServerRequest req) {
         this.req = req;

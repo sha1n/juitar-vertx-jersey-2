@@ -10,9 +10,8 @@ import java.net.URI;
 
 public class RestHandler implements Handler<HttpServerRequest> {
 
-    WebApplication app;
-
-    URI baseUri;
+    private WebApplication app;
+    private URI baseUri;
 
     public RestHandler(URI baseURI, String packageName) {
         this.baseUri = baseURI;
@@ -20,15 +19,9 @@ public class RestHandler implements Handler<HttpServerRequest> {
         this.app.initiate(new PackagesResourceConfig(packageName));
     }
 
-    public RestHandler(WebApplication app, URI baseUri) {
-        this.app = app;
-        this.baseUri = baseUri;
-    }
-
     @Override
     public void handle(HttpServerRequest req) {
         new RestRequestHandler(baseUri, app).handle(req);
     }
-
 
 }

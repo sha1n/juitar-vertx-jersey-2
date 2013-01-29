@@ -21,22 +21,23 @@ public class RestRequestHandler {
     /**
      * The data read from the HTTP request.
      */
-    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+    private ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
     /**
      * The HTTP server request that is currently being handled.
      */
-    HttpServerRequest req;
+    private HttpServerRequest req;
 
     /**
      * The Jersey Web Application that will handle the request.
      */
-    WebApplication app;
+    private WebApplication app;
 
     /**
      * The base URI for the REST ws.
      */
-    URI baseUri;
+    private URI baseUri;
+
 
     public RestRequestHandler(URI baseUri, WebApplication app) {
         this.app = app;
@@ -57,7 +58,6 @@ public class RestRequestHandler {
             try {
                 stream.write(data);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
