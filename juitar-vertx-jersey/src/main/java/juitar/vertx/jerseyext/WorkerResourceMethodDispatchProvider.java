@@ -10,11 +10,11 @@ import com.sun.jersey.spi.dispatch.RequestDispatcher;
  * @author sha1n
  * Date: 1/29/13
  */
-public class QueueResourceMethodDispatchProvider extends AbstractResourceMethodDispatchProvider implements ResourceMethodDispatchProvider {
+public class WorkerResourceMethodDispatchProvider extends AbstractResourceMethodDispatchProvider implements ResourceMethodDispatchProvider {
     @Override
     public RequestDispatcher create(AbstractResourceMethod abstractResourceMethod) {
-        if (abstractResourceMethod.getMethod().isAnnotationPresent(QueueOperation.class)) {
-            return new QueueRequestDispatcher(abstractResourceMethod);
+        if (abstractResourceMethod.getMethod().isAnnotationPresent(AsyncWorker.class)) {
+            return new WorkerRequestDispatcher(abstractResourceMethod);
         } else {
             return super.create(abstractResourceMethod);
         }
