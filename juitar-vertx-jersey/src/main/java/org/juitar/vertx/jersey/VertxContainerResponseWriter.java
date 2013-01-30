@@ -1,4 +1,4 @@
-package juitar.vertx.jerseyext;
+package org.juitar.vertx.jersey;
 
 import org.glassfish.jersey.server.ContainerException;
 import org.glassfish.jersey.server.ContainerResponse;
@@ -11,28 +11,24 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
-public class RestResponseHandler implements ContainerResponseWriter {
+/**
+ * @author sha1n
+ * Date: 1/30/13
+ */
+class VertxContainerResponseWriter implements ContainerResponseWriter {
 
-    /**
-     * The request that will be responded.
-     */
     private HttpServerRequest req;
-    /**
-     * The body of the response.
-     */
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    RestResponseHandler(HttpServerRequest req) {
+    VertxContainerResponseWriter(HttpServerRequest req) {
         this.req = req;
     }
 
     @Override
     public OutputStream writeResponseStatusAndHeaders(long contentLength, ContainerResponse responseContext) throws ContainerException {
-        // Set status
         req.response.statusCode = responseContext.getStatusInfo().getStatusCode();
         req.response.statusMessage = responseContext.getStatusInfo().getReasonPhrase();
 
-        // Set headers
         MultivaluedMap<String, Object> headers = responseContext.getHeaders();
         for (String key : headers.keySet()) {
             for (Object value : headers.get(key)) {
@@ -46,17 +42,16 @@ public class RestResponseHandler implements ContainerResponseWriter {
 
     @Override
     public boolean suspend(long timeOut, TimeUnit timeUnit, TimeoutHandler timeoutHandler) {
-        return true;  //To change body of implemented methods use File | Settings | File Templates.
+        return true;  // TODO what needs to be done here?
     }
 
     @Override
     public void setSuspendTimeout(long timeOut, TimeUnit timeUnit) throws IllegalStateException {
-        // TODO figure this out
+        // TODO what needs to be done here?
     }
 
     @Override
     public void commit() {
-        // TODO figure out what's wrong with this line. Response seems to be written twice.
         req.response.end(new Buffer(out.toByteArray()));
     }
 

@@ -1,9 +1,11 @@
-package juitar.vertx.jerseyext;
+package org.juitar.vertx.jersey;
 
 import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 /**
+ * This is a dummy implementation of the {@link SecurityContext} interface. Just for the POC to work.
+ *
  * @author sha1n
  * Date: 1/30/13
  */

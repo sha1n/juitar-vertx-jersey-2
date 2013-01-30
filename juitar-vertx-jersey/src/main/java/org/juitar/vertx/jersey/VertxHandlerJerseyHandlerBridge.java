@@ -1,4 +1,4 @@
-package juitar.vertx.jerseyext;
+package org.juitar.vertx.jersey;
 
 import org.glassfish.jersey.internal.MapPropertiesDelegate;
 import org.glassfish.jersey.internal.PropertiesDelegate;
@@ -13,35 +13,31 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class RestRequestHandler {
+/**
+ * This class acts as a bridge between a Vert.x {@link Handler} and a Jersey {@link ApplicationHandler}.
+ *
+ * @author sha1n
+ * Date: 1/30/13
+ */
+class VertxHandlerJerseyHandlerBridge {
 
-    /**
-     * The base URI for the REST ws.
-     */
     private final URI baseUri;
     private final ApplicationHandler applicationHandler;
-    /**
-     * The data read from the HTTP request.
-     */
     private ByteArrayOutputStream stream = new ByteArrayOutputStream();
-    /**
-     * The HTTP server request that is currently being handled.
-     */
-    private HttpServerRequest req;
+    private HttpServerRequest httpServerRequest;
 
-
-    public RestRequestHandler(final URI baseUri, final ApplicationHandler applicationHandler) {
+    VertxHandlerJerseyHandlerBridge(final URI baseUri, final ApplicationHandler applicationHandler) {
         this.baseUri = baseUri;
         this.applicationHandler = applicationHandler;
     }
 
-    public void handle(HttpServerRequest req) {
-        this.req = req;
-        req.dataHandler(new DataHandler());
-        req.endHandler(new EndRequestHandler());
+    void handle(HttpServerRequest request) {
+        this.httpServerRequest = request;
+        request.dataHandler(new DataHandler());
+        request.endHandler(new EndRequestHandler());
     }
 
-    public class DataHandler implements Handler<Buffer> {
+    private class DataHandler implements Handler<Buffer> {
 
         @Override
         public void handle(Buffer buf) {
@@ -54,7 +50,7 @@ public class RestRequestHandler {
         }
     }
 
-    public class EndRequestHandler implements Handler<Void> {
+    private class EndRequestHandler implements Handler<Void> {
 
         @Override
         public void handle(Void event) {
@@ -63,13 +59,13 @@ public class RestRequestHandler {
 
                 ContainerRequest containerRequest = new ContainerRequest(
                         baseUri,
-                        new URI(req.uri),
-                        req.method,
-                        new DummySecurityContext(new DummySecurityContext.DummyPrincipal("test")),
+                        new URI(httpServerRequest.uri),
+                        httpServerRequest.method,
+                        new DummySecurityContext(new DummySecurityContext.DummyPrincipal("test")), // TODO figure this out
                         properties
                 );
 
-                containerRequest.setWriter(new RestResponseHandler(req));
+                containerRequest.setWriter(new VertxContainerResponseWriter(httpServerRequest));
 
                 applicationHandler.handle(containerRequest);
             } catch (URISyntaxException e) {
