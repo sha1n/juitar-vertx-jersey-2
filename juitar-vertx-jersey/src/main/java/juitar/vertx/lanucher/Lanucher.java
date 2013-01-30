@@ -50,7 +50,9 @@ public class Lanucher {
                     e.printStackTrace();
                 }
 
-                vertx.createHttpServer().requestHandler(rm).listen(8080);
+                int port = 8080;
+                vertx.createHttpServer().requestHandler(rm).listen(port);
+                System.out.println("HTTP Server listening on port " + port);
             }
         });
 
