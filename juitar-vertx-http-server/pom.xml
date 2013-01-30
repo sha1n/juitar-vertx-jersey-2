@@ -9,16 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>juitar-vertx-jersey</artifactId>
+    <artifactId>juitar-vertx-http-server</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.vert-x</groupId>
             <artifactId>vertx-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet</artifactId>
         </dependency>
     </dependencies>
 

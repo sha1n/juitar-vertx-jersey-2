@@ -1,4 +1,4 @@
-package juitar.vertx.rest;
+package org.juitar.web.rest.resources;
 
 import juitar.worker.queue.*;
 
@@ -15,7 +15,7 @@ import java.util.UUID;
  * Date: 1/29/13
  */
 @Path("/async")
-public class TestResource {
+public class AsyncWorkerQueueResource {
 
     private static final WorkQueue QUEUE = new WorkQueueImpl();
     private static final WorkerQueueServiceRegistryImpl WORKER_QUEUE_SERVICE_REGISTRY = new WorkerQueueServiceRegistryImpl();
@@ -40,17 +40,17 @@ public class TestResource {
     }
 
 
+    /**
+     * This method uses JAX-RS 2 {@link AsyncResponse} response capability.
+     */
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Path("/std")
-    public String req(
-            @Suspended
-            final AsyncResponse asyncResponse) {
+    public void /* Yes it returns void */ asyncQueue(@Suspended final AsyncResponse asyncResponse) {
 
         Work work = new Work(UUID.randomUUID().toString(), "work-payload", new ResultChannel() {
             @Override
             public void onSuccess(Result result) {
-                asyncResponse.resume(result.getResultData());
+                asyncResponse.resume(result.toString());
             }
 
             @Override
@@ -60,14 +60,6 @@ public class TestResource {
         });
 
         QUEUE.submit(work);
-
-        return "default";
     }
 
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    @Path("/sub")
-    public String getSub() {
-        return "string";
-    }
 }
