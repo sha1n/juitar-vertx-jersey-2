@@ -3,6 +3,7 @@ package juitar.vertx.jerseyext;
 import org.glassfish.jersey.server.ContainerException;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.spi.ContainerResponseWriter;
+import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.http.HttpServerRequest;
 
 import javax.ws.rs.core.MultivaluedMap;
@@ -55,8 +56,8 @@ public class RestResponseHandler implements ContainerResponseWriter {
 
     @Override
     public void commit() {
-        // TODO figure out what's wrong with this line. Response seems to be written twice with this uncommented.
-//        req.response.end(new Buffer(out.toByteArray()));
+        // TODO figure out what's wrong with this line. Response seems to be written twice.
+        req.response.end(new Buffer(out.toByteArray()));
     }
 
     @Override
