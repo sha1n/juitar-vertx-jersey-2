@@ -1,13 +1,12 @@
 package juitar.vertx.rest;
 
-import com.sun.jersey.api.core.HttpRequestContext;
-import com.sun.jersey.api.core.HttpResponseContext;
-import juitar.vertx.jerseyext.AsyncWorker;
 import juitar.worker.queue.*;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.container.AsyncResponse;
+import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import java.util.UUID;
 
@@ -40,31 +39,33 @@ public class TestResource {
         workerQueueService.start(4);
     }
 
+
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @AsyncWorker
-    public void get(final HttpRequestContext requestContext, final HttpResponseContext responseContext) {
-        Work work = new Work(UUID.randomUUID().toString(), requestContext, new ResultChannel() {
+    @Path("/std")
+    public String req(
+            @Suspended
+            final AsyncResponse asyncResponse) {
+
+        Work work = new Work(UUID.randomUUID().toString(), "work-payload", new ResultChannel() {
             @Override
             public void onSuccess(Result result) {
-                responseContext.setEntity(result.getResultData());
-                responseContext.setStatus(200);
+                asyncResponse.resume(result.getResultData());
             }
 
             @Override
             public void onFailure(Result result, Exception e) {
-                responseContext.setEntity(result);
-                responseContext.setStatus(500);
+                asyncResponse.resume(e);
             }
         });
 
         QUEUE.submit(work);
 
-//        return "Test!!!";
+        return "default";
     }
 
     @GET
-    @Produces(MediaType.WILDCARD)
+    @Produces(MediaType.TEXT_PLAIN)
     @Path("/sub")
     public String getSub() {
         return "string";
