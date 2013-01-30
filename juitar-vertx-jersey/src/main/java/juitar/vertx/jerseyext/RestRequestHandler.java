@@ -1,47 +1,38 @@
 package juitar.vertx.jerseyext;
 
-import com.sun.jersey.core.header.InBoundHeaders;
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.WebApplication;
+import org.glassfish.jersey.internal.MapPropertiesDelegate;
+import org.glassfish.jersey.internal.PropertiesDelegate;
+import org.glassfish.jersey.server.ApplicationHandler;
+import org.glassfish.jersey.server.ContainerRequest;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.http.HttpServerRequest;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class RestRequestHandler {
 
     /**
+     * The base URI for the REST ws.
+     */
+    private final URI baseUri;
+    private final ApplicationHandler applicationHandler;
+    /**
      * The data read from the HTTP request.
      */
     private ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
     /**
      * The HTTP server request that is currently being handled.
      */
     private HttpServerRequest req;
 
-    /**
-     * The Jersey Web Application that will handle the request.
-     */
-    private WebApplication app;
 
-    /**
-     * The base URI for the REST ws.
-     */
-    private URI baseUri;
-
-
-    public RestRequestHandler(URI baseUri, WebApplication app) {
-        this.app = app;
+    public RestRequestHandler(final URI baseUri, final ApplicationHandler applicationHandler) {
         this.baseUri = baseUri;
+        this.applicationHandler = applicationHandler;
     }
 
     public void handle(HttpServerRequest req) {
@@ -60,9 +51,7 @@ public class RestRequestHandler {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
         }
-
     }
 
     public class EndRequestHandler implements Handler<Void> {
@@ -70,34 +59,24 @@ public class RestRequestHandler {
         @Override
         public void handle(Void event) {
             try {
-                ContainerRequest creq = new ContainerRequest(
-                        app,
-                        req.method,
+                PropertiesDelegate properties = new MapPropertiesDelegate();
+
+                ContainerRequest containerRequest = new ContainerRequest(
                         baseUri,
                         new URI(req.uri),
-                        getHeaders(req),
-                        new ByteArrayInputStream(stream.toByteArray())
+                        req.method,
+                        new DummySecurityContext(new DummySecurityContext.DummyPrincipal("test")),
+                        properties
                 );
 
-                app.handleRequest(creq, new RestResponseHandler(req));
-            } catch (URISyntaxException | IOException e) {
+                containerRequest.setWriter(new RestResponseHandler(req));
+
+                applicationHandler.handle(containerRequest);
+            } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
 
         }
 
     }
-
-    private InBoundHeaders getHeaders(HttpServerRequest req) {
-        InBoundHeaders headers = new InBoundHeaders();
-
-        for (Map.Entry<String, String> header : req.headers().entrySet()) {
-            List<String> value = new ArrayList<>();
-            value.add(header.getValue());
-            headers.put(header.getKey(), value);
-        }
-
-        return headers;
-    }
-
 }

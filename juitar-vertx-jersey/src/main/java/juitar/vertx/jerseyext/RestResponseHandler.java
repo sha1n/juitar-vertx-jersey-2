@@ -1,14 +1,14 @@
 package juitar.vertx.jerseyext;
 
-import com.sun.jersey.spi.container.ContainerResponse;
-import com.sun.jersey.spi.container.ContainerResponseWriter;
-import org.vertx.java.core.buffer.Buffer;
+import org.glassfish.jersey.server.ContainerException;
+import org.glassfish.jersey.server.ContainerResponse;
+import org.glassfish.jersey.server.spi.ContainerResponseWriter;
 import org.vertx.java.core.http.HttpServerRequest;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
 
 public class RestResponseHandler implements ContainerResponseWriter {
 
@@ -16,7 +16,6 @@ public class RestResponseHandler implements ContainerResponseWriter {
      * The request that will be responded.
      */
     private HttpServerRequest req;
-
     /**
      * The body of the response.
      */
@@ -27,15 +26,13 @@ public class RestResponseHandler implements ContainerResponseWriter {
     }
 
     @Override
-    public OutputStream writeStatusAndHeaders(long contentLength,
-                                              ContainerResponse response) throws IOException {
-
+    public OutputStream writeResponseStatusAndHeaders(long contentLength, ContainerResponse responseContext) throws ContainerException {
         // Set status
-        req.response.statusCode = response.getStatusType().getStatusCode();
-        req.response.statusMessage = response.getStatusType().getReasonPhrase();
+        req.response.statusCode = responseContext.getStatusInfo().getStatusCode();
+        req.response.statusMessage = responseContext.getStatusInfo().getReasonPhrase();
 
         // Set headers
-        MultivaluedMap<String, Object> headers = response.getHttpHeaders();
+        MultivaluedMap<String, Object> headers = responseContext.getHeaders();
         for (String key : headers.keySet()) {
             for (Object value : headers.get(key)) {
                 req.response.putHeader(key, value);
@@ -47,8 +44,23 @@ public class RestResponseHandler implements ContainerResponseWriter {
     }
 
     @Override
-    public void finish() throws IOException {
-        req.response.end(new Buffer(out.toByteArray()));
+    public boolean suspend(long timeOut, TimeUnit timeUnit, TimeoutHandler timeoutHandler) {
+        return true;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    public void setSuspendTimeout(long timeOut, TimeUnit timeUnit) throws IllegalStateException {
+        // TODO figure this out
+    }
+
+    @Override
+    public void commit() {
+        // TODO figure out what's wrong with this line. Response seems to be written twice with this uncommented.
+//        req.response.end(new Buffer(out.toByteArray()));
+    }
+
+    @Override
+    public void failure(Throwable error) {
+        req.response.end();
+    }
 }

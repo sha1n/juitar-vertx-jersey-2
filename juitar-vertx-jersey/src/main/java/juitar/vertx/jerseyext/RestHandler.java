@@ -1,27 +1,43 @@
 package juitar.vertx.jerseyext;
 
-import com.sun.jersey.api.core.PackagesResourceConfig;
-import com.sun.jersey.spi.container.WebApplication;
-import com.sun.jersey.spi.container.WebApplicationFactory;
+import org.glassfish.jersey.server.ApplicationHandler;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.spi.Container;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.http.HttpServerRequest;
 
 import java.net.URI;
 
-public class RestHandler implements Handler<HttpServerRequest> {
+public class RestHandler implements Handler<HttpServerRequest>, Container {
+    public static final String PROPERTY_BASE_URI = "juitar.vertx.server.rest.baseUri";
 
-    private WebApplication app;
-    private URI baseUri;
+    private final ApplicationHandler applicationHandler;
+    private final ResourceConfig resourceConfig;
+    private final URI baseUri;
 
-    public RestHandler(URI baseURI, String packageName) {
+    public RestHandler(URI baseURI, final ApplicationHandler applicationHandler, ResourceConfig resourceConfig) {
         this.baseUri = baseURI;
-        this.app = WebApplicationFactory.createWebApplication();
-        this.app.initiate(new PackagesResourceConfig(packageName));
+        this.resourceConfig = resourceConfig;
+        this.applicationHandler = applicationHandler;
     }
 
     @Override
     public void handle(HttpServerRequest req) {
-        new RestRequestHandler(baseUri, app).handle(req);
+        new RestRequestHandler(baseUri, applicationHandler).handle(req);
     }
 
+    @Override
+    public ResourceConfig getConfiguration() {
+        return resourceConfig;
+    }
+
+    @Override
+    public void reload() {
+        // TODO feature out what's that callback for
+    }
+
+    @Override
+    public void reload(ResourceConfig configuration) {
+        // TODO feature out what's that callback for
+    }
 }
