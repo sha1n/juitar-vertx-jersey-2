@@ -26,10 +26,10 @@ public class AsyncWorkerQueueResource {
             public Worker createWorker() {
                 return new Worker() {
                     @Override
-                    public Result doWork(Work work) {
+                    public void doWork(Work work) {
                         Result result = new Result(work.getId());
                         result.setResultData("Async generated...");
-                        return result;
+                        work.getResultChannel().onSuccess(result);
                     }
                 };
             }
