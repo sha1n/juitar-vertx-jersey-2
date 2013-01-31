@@ -1,10 +1,10 @@
 package org.juitar.web.rest.resources;
 
 import juitar.worker.queue.*;
+import org.juitar.vertx.lanucher.Launcher;
+import org.springframework.context.ApplicationContext;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
@@ -61,5 +61,33 @@ public class AsyncWorkerQueueResource {
 
         QUEUE.submit(work);
     }
+
+    @PUT
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Path("/sql")
+    public void submit(String sql, @Suspended final AsyncResponse response) {
+
+        ApplicationContext applicationContext = Launcher.applicationContext;
+        WorkQueue jdbcBatchQueue = (WorkQueue) applicationContext.getBean("jdbcBatchQueue");
+
+        Work work = new Work(UUID.randomUUID().toString(),
+                new String[]{sql},
+                new ResultChannel() {
+                    @Override
+                    public void onSuccess(Result result) {
+                        response.resume("Result received: " + result.toString());
+                    }
+
+                    @Override
+                    public void onFailure(Result result, Exception e) {
+                        e.printStackTrace();
+                        response.resume(e);
+                    }
+                });
+
+        jdbcBatchQueue.submit(work);
+
+    }
+
 
 }
