@@ -28,6 +28,16 @@
         </dependency>
         <dependency>
             <groupId>org.juitar</groupId>
+            <artifactId>jdbc-worker</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.juitar</groupId>
+            <artifactId>launcher</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.juitar</groupId>
             <artifactId>test-client</artifactId>
         </dependency>
         <dependency>
