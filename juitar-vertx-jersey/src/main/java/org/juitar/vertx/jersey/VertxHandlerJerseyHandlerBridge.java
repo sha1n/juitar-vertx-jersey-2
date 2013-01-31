@@ -8,6 +8,7 @@ import org.vertx.java.core.Handler;
 import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.http.HttpServerRequest;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -33,8 +34,8 @@ class VertxHandlerJerseyHandlerBridge {
 
     void handle(HttpServerRequest request) {
         this.httpServerRequest = request;
-        request.dataHandler(new DataHandler());
-        request.endHandler(new EndRequestHandler());
+        this.httpServerRequest.dataHandler(new DataHandler());
+        this.httpServerRequest.endHandler(new EndRequestHandler());
     }
 
     private class DataHandler implements Handler<Buffer> {
@@ -65,9 +66,11 @@ class VertxHandlerJerseyHandlerBridge {
                         properties
                 );
 
+                containerRequest.setEntityStream(new ByteArrayInputStream(stream.toByteArray()));
                 containerRequest.setWriter(new VertxContainerResponseWriter(httpServerRequest));
 
                 applicationHandler.handle(containerRequest);
+
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
