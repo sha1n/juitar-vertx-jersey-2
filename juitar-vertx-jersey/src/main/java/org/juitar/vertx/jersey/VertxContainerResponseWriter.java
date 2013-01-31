@@ -3,6 +3,7 @@ package org.juitar.vertx.jersey;
 import org.glassfish.jersey.server.ContainerException;
 import org.glassfish.jersey.server.ContainerResponse;
 import org.glassfish.jersey.server.spi.ContainerResponseWriter;
+import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.vertx.java.core.buffer.Buffer;
 import org.vertx.java.core.http.HttpServerRequest;
 
@@ -57,6 +58,11 @@ class VertxContainerResponseWriter implements ContainerResponseWriter {
 
     @Override
     public void failure(Throwable error) {
+        if (req.response.statusCode == HttpResponseStatus.OK.getCode()) {
+            req.response.statusCode = HttpResponseStatus.INTERNAL_SERVER_ERROR.getCode();
+            req.response.statusMessage = HttpResponseStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
+        }
+
         req.response.end();
     }
 }
