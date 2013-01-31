@@ -3,9 +3,44 @@ Juitar-Vert.x
 This repository plays with REST resources that fulfills requests asynchronously through worker-queues.
 The code relies on embedded Vert.x for HTTP server and Jersey 2.0 as a REST framework.
 
+Module: juitar-vertx-rest-sampleapp
+-----------------------------------
+This module takes the HTTP server and Jersey adapters implemented by the other two modules and implements a REST resource
+ which makes use of the [worker-queue](https://github.com/sha1n/juitar-playground/tree/master/core/jdbc-worker) and
+ [jdbc-worker modules](https://github.com/sha1n/juitar-playground/tree/master/core/worker-queue) implemented in repository
+ [juitar-playground](https://github.com/sha1n/juitar-playground).
 
-Launcher Code
--------------
+### REST Async Response PUT Method Using the JDBC Worker Queue
+
+    @PUT
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Path("/sql")
+    public void submit(String sql, @Suspended final AsyncResponse response) {
+
+        ApplicationContext applicationContext = Launcher.applicationContext;
+        WorkQueue jdbcBatchQueue = (WorkQueue) applicationContext.getBean("jdbcBatchQueue");
+
+        Work work = new Work(UUID.randomUUID().toString(),
+                new String[]{sql},
+                new ResultChannel() {
+                    @Override
+                    public void onSuccess(Result result) {
+                        response.resume("Result received: " + result.toString());
+                    }
+
+                    @Override
+                    public void onFailure(Result result, Exception e) {
+                        e.printStackTrace();
+                        response.resume(e);
+                    }
+                });
+
+        jdbcBatchQueue.submit(work);
+
+    }
+
+
+### Launcher Code
 
     public class Lanucher {
 
