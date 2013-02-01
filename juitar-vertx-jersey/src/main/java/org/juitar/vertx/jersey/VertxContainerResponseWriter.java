@@ -20,6 +20,12 @@ class VertxContainerResponseWriter implements ContainerResponseWriter {
 
     private HttpServerRequest req;
     private ByteArrayOutputStream out = new ByteArrayOutputStream();
+    /**
+     * This is to make sure the response is not ended more than once.
+     * Jersey 2.0 seems to call {@link #commit()}  twice at least when
+     * an unmapped request URL is coming in (404).
+     */
+    private boolean ended = false;
 
     VertxContainerResponseWriter(HttpServerRequest req) {
         this.req = req;
@@ -53,16 +59,22 @@ class VertxContainerResponseWriter implements ContainerResponseWriter {
 
     @Override
     public void commit() {
-        req.response.end(new Buffer(out.toByteArray()));
+        if (!ended) {
+            req.response.end(new Buffer(out.toByteArray()));
+        }
+        ended = true;
     }
 
     @Override
     public void failure(Throwable error) {
-        if (req.response.statusCode == HttpResponseStatus.OK.getCode()) {
-            req.response.statusCode = HttpResponseStatus.INTERNAL_SERVER_ERROR.getCode();
-            req.response.statusMessage = HttpResponseStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
-        }
+        if (!ended) {
+            if (req.response.statusCode == HttpResponseStatus.OK.getCode()) {
+                req.response.statusCode = HttpResponseStatus.INTERNAL_SERVER_ERROR.getCode();
+                req.response.statusMessage = HttpResponseStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
+            }
 
-        req.response.end();
+            req.response.end();
+        }
+        ended = true;
     }
 }
