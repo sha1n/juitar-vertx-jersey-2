@@ -36,6 +36,8 @@ public class VertxHttpServer {
     private final int port;
     private final ShutdownHook shutdownHook;
 
+    private volatile boolean started = false;
+
     /**
      * Constructs a new VertxHttpServer instance.
      *
@@ -61,6 +63,14 @@ public class VertxHttpServer {
     }
 
     /**
+     * Returns the current state of the server.
+     * @return {@code true} is the server is started, otherwise {@code false}
+     */
+    public final boolean isStarted() {
+        return started;
+    }
+
+    /**
      * Returns the port this server is set to listen on.
      * @return int
      */
@@ -70,25 +80,38 @@ public class VertxHttpServer {
 
     /**
      * Starts the HTTP server.
+     * @return {@code true} is the server has been started as a result of this call, otherwise {@code false}
      */
-    public final void start() {
-        httpServer.listen(port);
-        LOGGER.info("HTTP Server listening on port " + port);
+    public final boolean start() {
+        if (!started) {
+            httpServer.listen(port);
+            started = true;
+            LOGGER.info("HTTP Server listening on port " + port);
+        }
+
+        return started;
     }
 
     /**
      * Stops the HTTP server.
+     *
+     * @return {@code true} is the server has been stopped as a result of this call, otherwise {@code false}
      */
-    public final void stop() {
-        try {
-            shutdownHook.beforeShutdown();
-        } finally {
+    public final boolean stop() {
+        if (started) {
             try {
-                httpServer.close();
+                shutdownHook.beforeShutdown();
             } finally {
-                shutdownHook.afterShutdown();
+                try {
+                    httpServer.close();
+                    started = false;
+                } finally {
+                    shutdownHook.afterShutdown();
+                }
             }
         }
+
+        return !started;
     }
 
 }
