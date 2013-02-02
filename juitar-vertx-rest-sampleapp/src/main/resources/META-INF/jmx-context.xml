@@ -25,6 +25,7 @@
         <property name="attributeSource" ref="jmxAttributeSource"/>
     </bean>
 
-    <bean id="httpServer" class="org.juitar.vertx.lanucher.HttpServerJmxWrapper"/>
+    <bean id="httpServerJmxWrapper" class="org.juitar.jmx.HttpServerJmxWrapper" lazy-init="true" scope="singleton"/>
+    <bean id="apiHandlerJmxWrapper" class="org.juitar.jmx.ApiHandlerJmxWrapper" lazy-init="true" scope="singleton"/>
 
 </beans>
