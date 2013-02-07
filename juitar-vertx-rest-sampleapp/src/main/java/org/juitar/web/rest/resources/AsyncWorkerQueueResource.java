@@ -17,6 +17,8 @@ import java.util.UUID;
 @Path("/async")
 public class AsyncWorkerQueueResource {
 
+    private static final TxProbe GET_PROBE = new TxProbe();
+    private static final TxProbe PUT_PROBE = new TxProbe();
     private static final WorkQueue QUEUE = new WorkQueueImpl();
     private static final WorkerQueueServiceRegistryImpl WORKER_QUEUE_SERVICE_REGISTRY = new WorkerQueueServiceRegistryImpl();
 
@@ -39,13 +41,15 @@ public class AsyncWorkerQueueResource {
         workerQueueService.start(4);
     }
 
-
     /**
      * This method uses JAX-RS 2 {@link AsyncResponse} response capability.
      */
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public void /* Yes it returns void */ asyncQueue(@Suspended final AsyncResponse asyncResponse) {
+        if (GET_PROBE.hit()) {
+            System.out.println("GET TPS: " + GET_PROBE.getCurrentTPS());
+        }
 
         Work work = new Work(UUID.randomUUID().toString(), "work-payload", new ResultChannel() {
             @Override
@@ -67,6 +71,11 @@ public class AsyncWorkerQueueResource {
     @Path("/sql")
     public void submit(String sql, @Suspended final AsyncResponse response) {
 
+        if (PUT_PROBE.hit()) {
+            System.out.println("PUT TPS: " + PUT_PROBE.getCurrentTPS());
+        }
+
+        final long time = System.currentTimeMillis();
         ApplicationContext applicationContext = Launcher.applicationContext;
         WorkQueue jdbcBatchQueue = (WorkQueue) applicationContext.getBean("jdbcBatchQueue");
 
@@ -75,7 +84,9 @@ public class AsyncWorkerQueueResource {
                 new ResultChannel() {
                     @Override
                     public void onSuccess(Result result) {
-                        response.resume("Result received: " + result.toString());
+                        response.resume("Result received in "
+                                + (System.currentTimeMillis() - time)
+                                + "ms: " + result.toString());
                     }
 
                     @Override
@@ -91,3 +102,4 @@ public class AsyncWorkerQueueResource {
 
 
 }
+
