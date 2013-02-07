@@ -1,6 +1,7 @@
 package org.juitar.web.rest.resources;
 
 import juitar.worker.queue.*;
+import org.juitar.monitoring.api.MethodInvocationProbe;
 import org.juitar.vertx.lanucher.Launcher;
 import org.springframework.context.ApplicationContext;
 
@@ -17,8 +18,8 @@ import java.util.UUID;
 @Path("/async")
 public class AsyncWorkerQueueResource {
 
-    private static final TxProbe GET_PROBE = new TxProbe();
-    private static final TxProbe PUT_PROBE = new TxProbe();
+    private static final MethodInvocationProbe GET_PROBE = new MethodInvocationProbe(1000);
+    private static final MethodInvocationProbe PUT_PROBE = new MethodInvocationProbe(1000);
     private static final WorkQueue QUEUE = new WorkQueueImpl();
     private static final WorkerQueueServiceRegistryImpl WORKER_QUEUE_SERVICE_REGISTRY = new WorkerQueueServiceRegistryImpl();
 
@@ -48,7 +49,7 @@ public class AsyncWorkerQueueResource {
     @Produces(MediaType.TEXT_PLAIN)
     public void /* Yes it returns void */ asyncQueue(@Suspended final AsyncResponse asyncResponse) {
         if (GET_PROBE.hit()) {
-            System.out.println("GET TPS: " + GET_PROBE.getCurrentTPS());
+            System.out.println("GET TPS: " + GET_PROBE.getLastInvocationCount());
         }
 
         Work work = new Work(UUID.randomUUID().toString(), "work-payload", new ResultChannel() {
@@ -72,7 +73,7 @@ public class AsyncWorkerQueueResource {
     public void submit(String sql, @Suspended final AsyncResponse response) {
 
         if (PUT_PROBE.hit()) {
-            System.out.println("PUT TPS: " + PUT_PROBE.getCurrentTPS());
+            System.out.println("PUT TPS: " + PUT_PROBE.getLastInvocationCount());
         }
 
         final long time = System.currentTimeMillis();
