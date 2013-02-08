@@ -1,8 +1,8 @@
 package org.juitar.web.rest.resources;
 
-import juitar.worker.queue.*;
 import org.juitar.monitoring.api.MethodInvocationProbe;
 import org.juitar.vertx.lanucher.Launcher;
+import org.juitar.workerq.*;
 import org.springframework.context.ApplicationContext;
 
 import javax.ws.rs.*;
@@ -32,7 +32,7 @@ public class AsyncWorkerQueueResource {
                     public void doWork(Work work) {
                         Result result = new Result(work.getId());
                         result.setResultData("Async generated...");
-                        work.getResultChannel().onSuccess(result);
+                        work.getCompletionCallback().onSuccess(result);
                     }
                 };
             }
@@ -52,14 +52,14 @@ public class AsyncWorkerQueueResource {
             System.out.println("GET TPS: " + GET_PROBE.getLastInvocationCount());
         }
 
-        Work work = new Work(UUID.randomUUID().toString(), "work-payload", new ResultChannel() {
+        Work work = new Work(UUID.randomUUID().toString(), "work-payload", new CompletionCallback() {
             @Override
             public void onSuccess(Result result) {
                 asyncResponse.resume(result.toString());
             }
 
             @Override
-            public void onFailure(Result result, Exception e) {
+            public void onFailure(Result result, Exception e, CompletionStatus sttaus) {
                 asyncResponse.resume(e);
             }
         });
@@ -82,7 +82,7 @@ public class AsyncWorkerQueueResource {
 
         Work work = new Work(UUID.randomUUID().toString(),
                 new String[]{sql},
-                new ResultChannel() {
+                new CompletionCallback() {
                     @Override
                     public void onSuccess(Result result) {
                         response.resume("Result received in "
@@ -91,7 +91,7 @@ public class AsyncWorkerQueueResource {
                     }
 
                     @Override
-                    public void onFailure(Result result, Exception e) {
+                    public void onFailure(Result result, Exception e, CompletionStatus status) {
                         e.printStackTrace();
                         response.resume(e);
                     }
