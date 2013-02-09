@@ -20,7 +20,7 @@ public class AsyncWorkerQueueResource {
 
     private static final MethodInvocationProbe GET_PROBE = new MethodInvocationProbe(1000);
     private static final MethodInvocationProbe PUT_PROBE = new MethodInvocationProbe(1000);
-    private static final WorkQueue QUEUE = new WorkQueueImpl();
+    private static final WorkQueue QUEUE = new BlockingWorkQueue();
     private static final WorkerQueueServiceRegistryImpl WORKER_QUEUE_SERVICE_REGISTRY = new WorkerQueueServiceRegistryImpl();
 
     static {
@@ -64,7 +64,7 @@ public class AsyncWorkerQueueResource {
             }
         });
 
-        QUEUE.submit(work);
+        QUEUE.add(work);
     }
 
     @PUT
@@ -97,7 +97,7 @@ public class AsyncWorkerQueueResource {
                     }
                 });
 
-        jdbcBatchQueue.submit(work);
+        jdbcBatchQueue.add(work);
 
     }
 
