@@ -10,6 +10,9 @@ import javax.ws.rs.container.AsyncResponse;
 import javax.ws.rs.container.Suspended;
 import javax.ws.rs.core.MediaType;
 import java.util.UUID;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedTransferQueue;
+import java.util.concurrent.TransferQueue;
 
 /**
  * @author sha1n
@@ -20,7 +23,7 @@ public class AsyncWorkerQueueResource {
 
     private static final MethodInvocationProbe GET_PROBE = new MethodInvocationProbe(1000);
     private static final MethodInvocationProbe PUT_PROBE = new MethodInvocationProbe(1000);
-    private static final WorkQueue QUEUE = new BlockingWorkQueue();
+    private static final WorkQueue QUEUE = new BlockingWorkQueue(new LinkedTransferQueue<Work>(), new TransferQueueAdapter());
     private static final WorkerQueueServiceRegistryImpl WORKER_QUEUE_SERVICE_REGISTRY = new WorkerQueueServiceRegistryImpl();
 
     static {
@@ -102,5 +105,35 @@ public class AsyncWorkerQueueResource {
     }
 
 
+    private static class TransferQueueAdapter implements BlockingQueueAdapter {
+        private TransferQueue<Work> workBlockingQueue;
+
+        @Override
+        public void setDelegate(BlockingQueue<Work> blockingQueue) {
+            this.workBlockingQueue = (TransferQueue<Work>) blockingQueue;
+        }
+
+        @Override
+        public boolean add(Work work) {
+            boolean added = false;
+            if (workBlockingQueue.hasWaitingConsumer()) {
+                added = workBlockingQueue.add(work);
+            } else {
+                try {
+                    workBlockingQueue.transfer(work);
+                    added = true;
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return added;
+        }
+
+        @Override
+        public Work take() throws InterruptedException {
+            return workBlockingQueue.take();
+        }
+    }
 }
 
