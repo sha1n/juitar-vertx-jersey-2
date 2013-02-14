@@ -3,13 +3,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>juitar-vertx</artifactId>
+        <artifactId>juitar-vertx-jersey-2</artifactId>
         <groupId>org.juitar</groupId>
         <version>1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>juitar-vertx-http-server</artifactId>
+    <name>Vert.x HTTP Server</name>
+    <description>Embedded Vert.x HTTP server implementation</description>
 
     <dependencies>
         <dependency>
