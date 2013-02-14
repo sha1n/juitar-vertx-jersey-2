@@ -5,9 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.juitar</groupId>
-    <artifactId>juitar-vertx</artifactId>
+    <artifactId>juitar-vertx-jersey-2</artifactId>
     <version>1.0</version>
     <packaging>pom</packaging>
+    <name>Vert.x Jersey 2 (parent)</name>
+    <description>This project experiments with Vert.x and JAX-RS/Jersey 2 asynchronous REST services implementations</description>
 
     <modules>
         <module>juitar-vertx-http-server</module>
