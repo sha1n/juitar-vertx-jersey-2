@@ -1,5 +1,5 @@
-Juitar-Vert.x
-=============
+Juitar-Vert.x-Jersey-2
+======================
 This repository plays with REST resources that fulfills requests asynchronously through worker-queues.
 The code relies on an embedded Vert.x core components for HTTP server with async IO capabilities and Jersey 2.0 for REST framework.
 
