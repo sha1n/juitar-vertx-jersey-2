@@ -9,7 +9,8 @@
     <version>1.0</version>
     <packaging>pom</packaging>
     <name>Vert.x Jersey 2 (parent)</name>
-    <description>This project experiments with Vert.x and JAX-RS/Jersey 2 asynchronous REST services implementations</description>
+    <description>This project experiments with Vert.x and JAX-RS/Jersey 2 asynchronous REST services implementations
+    </description>
 
     <modules>
         <module>juitar-vertx-http-server</module>
@@ -75,7 +76,7 @@
             <dependency>
                 <groupId>org.glassfish.jersey.containers</groupId>
                 <artifactId>jersey-container-servlet</artifactId>
-                <version>2.0-m11</version>
+                <version>2.0-m12</version>
             </dependency>
 
             <!-- Other juitar modules -->
