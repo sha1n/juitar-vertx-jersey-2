@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>juitar-vertx-jersey-2</artifactId>
+        <groupId>org.juitar</groupId>
+        <version>1.0</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>sample-rest-app</artifactId>
+    <name>Sample App Commons</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.juitar</groupId>
+            <artifactId>worker-queue</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.juitar</groupId>
+            <artifactId>jdbc-worker</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0-m15</version>
+        </dependency>
+    </dependencies>
+</project>

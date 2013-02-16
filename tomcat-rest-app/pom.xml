@@ -9,23 +9,23 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>juitar-vertx-rest-sampleapp</artifactId>
-    <name>Sample Application</name>
-    <description>
-        Sample REST application build on top of JAX-RS with Jersey 2.0 utilizing asynchronous responses to
-        provide synchronous client experience while processing requests via worker queues.
-    </description>
+    <artifactId>tomcat-rest-app</artifactId>
+    <name>Tomcat Sample App</name>
 
     <dependencies>
         <dependency>
-            <groupId>org.juitar</groupId>
-            <artifactId>juitar-vertx-http-server</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>7.0.35</version>
         </dependency>
         <dependency>
-            <groupId>org.juitar</groupId>
-            <artifactId>juitar-vertx-jersey</artifactId>
-            <version>${project.version}</version>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-logging-juli</artifactId>
+            <version>7.0.35</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
         </dependency>
         <dependency>
             <groupId>org.juitar</groupId>
@@ -38,18 +38,13 @@
         </dependency>
         <dependency>
             <groupId>org.juitar</groupId>
-            <artifactId>launcher</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.juitar</groupId>
-            <artifactId>test-client</artifactId>
+            <artifactId>sample-rest-app</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <scope>runtime</scope>
         </dependency>
-
     </dependencies>
 </project>

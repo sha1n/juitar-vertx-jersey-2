@@ -1,12 +1,12 @@
 package org.juitar.vertx.lanucher;
 
-import junitar.server.netty.SpringContextLoader;
 import org.glassfish.jersey.server.ApplicationHandler;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.internal.scanning.PackageNamesScanner;
 import org.juitar.jmx.ApiHandlerJmxWrapper;
 import org.juitar.jmx.HttpServerJmxWrapper;
 import org.juitar.server.http.vertx.VertxHttpServer;
+import org.juitar.spring.SpringContextLoader;
 import org.juitar.vertx.jersey.VertxContainerHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,6 @@ import org.vertx.java.core.http.RouteMatcher;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @author sha1n
@@ -29,7 +28,7 @@ public class Launcher {
 
     public static ApplicationContext applicationContext;
 
-    public static void main(String... args) throws IOException, URISyntaxException, ExecutionException, InterruptedException {
+    public static void main(String... args) throws IOException, URISyntaxException {
 
         GenericApplicationContext genericApplicationContext;
 

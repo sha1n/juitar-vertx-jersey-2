@@ -1,7 +1,7 @@
 package org.juitar.web.rest.resources;
 
 import org.juitar.monitoring.api.MethodInvocationProbe;
-import org.juitar.vertx.lanucher.Launcher;
+import org.juitar.spring.SpringContextLoader;
 import org.juitar.workerq.*;
 import org.springframework.context.ApplicationContext;
 
@@ -80,7 +80,7 @@ public class AsyncWorkerQueueResource {
         }
 
         final long time = System.currentTimeMillis();
-        ApplicationContext applicationContext = Launcher.applicationContext;
+        ApplicationContext applicationContext = SpringContextLoader.getContext();
         WorkQueue jdbcBatchQueue = (WorkQueue) applicationContext.getBean("jdbcBatchQueue");
 
         Work work = new Work(UUID.randomUUID().toString(),
