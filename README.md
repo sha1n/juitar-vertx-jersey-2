@@ -1,17 +1,17 @@
-Juitar-Vert.x
-=============
+Juitar-Vert.x-Jersey-2
+======================
 This repository plays with REST resources that fulfills requests asynchronously through worker-queues.
-The code relies on embedded Vert.x for HTTP server and Jersey 2.0 as a REST framework.
+The code relies on an embedded Vert.x core components for HTTP server with async IO capabilities and Jersey 2.0 for REST framework.
 
 Module: juitar-vertx-http-server
 --------------------------------
-This module provides a convenient Vert.x based HTTP server class with basic lifecycle methods and shutdown hook callback
+Provides a convenient Vert.x based HTTP server class with basic lifecycle methods and shutdown hook callback
 interface option.
 
 
 Module: juitar-vertx-jersey
 --------------------------------
-This module provides a very basic implementation to enable Jersey 2.0 to work on top of a Vert.x HTTP server.
+Provides a very basic implementation to enable Jersey 2.0 to work on top of a Vert.x HTTP server.
 
 
 Module: juitar-vertx-rest-sampleapp
