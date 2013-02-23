@@ -81,7 +81,7 @@ public class AsyncWorkerQueueResource {
 
         final long time = System.currentTimeMillis();
         ApplicationContext applicationContext = SpringContextLoader.getContext();
-        WorkQueue jdbcBatchQueue = (WorkQueue) applicationContext.getBean("jdbcBatchQueue");
+        WorkQueue jdbcBatchQueue = (WorkQueue) applicationContext.getBean("batchUpdateQueue");
 
         Work work = new Work(UUID.randomUUID().toString(),
                 new String[]{sql},
@@ -103,7 +103,6 @@ public class AsyncWorkerQueueResource {
         jdbcBatchQueue.add(work);
 
     }
-
 
     private static class TransferQueueAdapter implements BlockingQueueAdapter {
         private TransferQueue<Work> workBlockingQueue;
