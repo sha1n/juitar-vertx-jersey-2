@@ -76,7 +76,7 @@ public class AsyncWorkerQueueResource {
     public void submit(String sql, @Suspended final AsyncResponse response) {
 
         if (PUT_PROBE.hit()) {
-            System.out.println("PUT TPS: " + PUT_PROBE.getLastInvocationCount());
+            System.err.println("PUT TPS: " + PUT_PROBE.getLastInvocationCount());
         }
 
         final long time = System.currentTimeMillis();
