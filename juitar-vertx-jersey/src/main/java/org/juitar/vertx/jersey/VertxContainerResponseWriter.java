@@ -77,4 +77,9 @@ class VertxContainerResponseWriter implements ContainerResponseWriter {
         }
         ended = true;
     }
+
+    @Override
+    public boolean enableResponseBuffering() {
+        return true;
+    }
 }
