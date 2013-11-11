@@ -28,6 +28,11 @@
             <version>1.0</version>
         </dependency>
         <dependency>
+            <groupId>org.juitar</groupId>
+            <artifactId>juitar-vertx-jersey</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
         </dependency>

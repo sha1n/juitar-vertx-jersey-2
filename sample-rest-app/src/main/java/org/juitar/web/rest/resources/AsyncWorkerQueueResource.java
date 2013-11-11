@@ -2,6 +2,7 @@ package org.juitar.web.rest.resources;
 
 import org.juitar.monitoring.api.MethodInvocationProbe;
 import org.juitar.spring.SpringContextLoader;
+import org.juitar.vertx.jersey.CommonQueryProvider;
 import org.juitar.workerq.*;
 import org.springframework.context.ApplicationContext;
 
@@ -50,7 +51,9 @@ public class AsyncWorkerQueueResource {
      */
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    public void /* Yes it returns void */ asyncQueue(@Suspended final AsyncResponse asyncResponse) {
+    public void /* Yes it returns void */ asyncQueue(
+            @BeanParam final CommonQueryProvider t,
+            @Suspended final AsyncResponse asyncResponse) {
         if (GET_PROBE.hit()) {
             System.out.println("GET TPS: " + GET_PROBE.getLastInvocationCount());
         }
