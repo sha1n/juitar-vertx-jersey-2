@@ -1,0 +1,31 @@
+// ========== SYSTEM CODE PERMISSIONS =========================================
+
+
+// These permissions apply to javac
+grant codeBase "file:${java.home}/lib/-" {
+        permission java.security.AllPermission;
+};
+
+// These permissions apply to all shared system extensions
+grant codeBase "file:${java.home}/jre/lib/ext/-" {
+        permission java.security.AllPermission;
+};
+
+// These permissions apply to javac when ${java.home] points at $JAVA_HOME/jre
+grant codeBase "file:${java.home}/../lib/-" {
+        permission java.security.AllPermission;
+};
+
+// These permissions apply to all shared system extensions when
+// ${java.home} points at $JAVA_HOME/jre
+grant codeBase "file:${java.home}/lib/ext/-" {
+        permission java.security.AllPermission;
+};
+
+grant codeBase "file:/Users/shainagar/.m2/repository/org/juitar/jdbc-worker/1.0/jdbc-worker-1.0.jar" {
+    permission java.lang.RuntimePermission "modifyThreadGroup";
+};
+
+grant codeBase "file:/Users/shainagar/GitHub/juitar-vertx-jersey-2/vertx-rest-app/target/classes/*" {
+    permission org.juitar.vertx.lanucher.LifecyclePermission "toPhase";
+};
