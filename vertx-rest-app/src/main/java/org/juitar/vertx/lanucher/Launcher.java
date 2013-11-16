@@ -30,6 +30,9 @@ public class Launcher {
 
     public static void main(String... args) throws IOException, URISyntaxException {
 
+        System.setSecurityManager(new SecurityManager());
+        PlatformLifecycle.toPhase(Phase.STARTUP);
+
         GenericApplicationContext genericApplicationContext;
 
         LOGGER.info("Loading Spring context...");
@@ -37,7 +40,6 @@ public class Launcher {
         genericApplicationContext.refresh();
         genericApplicationContext.start();
         applicationContext = genericApplicationContext;
-
 
         RouteMatcher routeMatcher = createApiRouteMatcher();
 
@@ -47,6 +49,7 @@ public class Launcher {
         httpServerJmxWrapper.setHttpServer(httpServer);
 
         httpServer.start();
+        PlatformLifecycle.toPhase(Phase.RUNNING);
 
         LOGGER.info("Server is ready.");
     }
