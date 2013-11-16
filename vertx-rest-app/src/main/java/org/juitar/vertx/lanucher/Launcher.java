@@ -30,7 +30,9 @@ public class Launcher {
 
     public static void main(String... args) throws IOException, URISyntaxException {
 
-        System.setSecurityManager(new SecurityManager());
+        if (System.getProperties().contains("java.security.policy")) {
+            System.setSecurityManager(new SecurityManager());
+        }
         PlatformLifecycle.toPhase(Phase.STARTUP);
 
         GenericApplicationContext genericApplicationContext;
